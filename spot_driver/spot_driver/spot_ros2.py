@@ -585,50 +585,51 @@ class SpotROS():
             self.camera_static_transform_broadcaster.sendTransform(self.camera_static_transforms)
 
     # Arm functions ##################################################
-    def handle_arm_stow(self, srv_data):
+    
+    def handle_arm_stow(self, request, response):
         """ROS service handler to command the arm to stow, home position"""
-        resp = self.spot_wrapper.arm_stow()
-        return TriggerResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.arm_stow()
+        return response
 
-    def handle_arm_unstow(self, srv_data):
+    def handle_arm_unstow(self, request, response):
         """ROS service handler to command the arm to unstow, joints are all zeros"""
-        resp = self.spot_wrapper.arm_unstow()
-        return TriggerResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.arm_unstow()
+        return response
 
-    def handle_arm_joint_move(self, srv_data: ArmJointMovementRequest):
+    def handle_arm_joint_move(self, request, response):
         """ROS service handler to send joint movement to the arm to execute"""
-        resp = self.spot_wrapper.arm_joint_move(joint_targets=srv_data.joint_target)
-        return ArmJointMovementResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.arm_joint_move(joint_targets=request.joint_target)
+        return response
 
-    def handle_force_trajectory(self, srv_data: ArmForceTrajectoryRequest):
+    def handle_force_trajectory(self, request, response):
         """ROS service handler to send a force trajectory up or down a vertical force"""
-        resp = self.spot_wrapper.force_trajectory(data=srv_data)
-        return ArmForceTrajectoryResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.force_trajectory(data=request)
+        return response
 
-    def handle_gripper_open(self, srv_data):
+    def handle_gripper_open(self, request, response):
         """ROS service handler to open the gripper"""
-        resp = self.spot_wrapper.gripper_open()
-        return TriggerResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.gripper_open()
+        return response
 
-    def handle_gripper_close(self, srv_data):
+    def handle_gripper_close(self, request, response):
         """ROS service handler to close the gripper"""
-        resp = self.spot_wrapper.gripper_close()
-        return TriggerResponse(resp[0], resp[1])
-
-    def handle_gripper_angle_open(self, srv_data: GripperAngleMoveRequest):
+        response.success, response.message = self.spot_wrapper.gripper_close()
+        return response
+    
+    def handle_gripper_angle_open(self, request, response):
         """ROS service handler to open the gripper at an angle"""
-        resp = self.spot_wrapper.gripper_angle_open(gripper_ang=srv_data.gripper_angle)
-        return GripperAngleMoveResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.gripper_angle_open(gripper_ang=request.gripper_angle)
+        return response
 
-    def handle_arm_carry(self, srv_data):
+    def handle_arm_carry(self, request, response):
         """ROS service handler to put arm in carry mode"""
-        resp = self.spot_wrapper.arm_carry()
-        return TriggerResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.arm_carry()
+        return response
 
-    def handle_hand_pose(self, srv_data: HandPoseRequest):
+    def handle_hand_pose(self, request, response):
         """ROS service to give a position to the gripper"""
-        resp = self.spot_wrapper.hand_pose(pose_points=srv_data.pose_point)
-        return HandPoseResponse(resp[0], resp[1])
+        response.success, response.message = self.spot_wrapper.hand_pose(pose_points=request.pose_point)
+        return response
 
     ##################################################################
             
@@ -819,7 +820,17 @@ def main(args = None):
         node.create_service(Trigger,"estop/hard", spot_ros.handle_estop_hard, callback_group=spot_ros.group)
         node.create_service(Trigger,"estop/gentle", spot_ros.handle_estop_soft, callback_group=spot_ros.group)
         node.create_service(Trigger,"estop/release", spot_ros.handle_estop_disengage, callback_group=spot_ros.group)
+        node.create_service(Trigger,"arm_stow", spot_ros.handle_arm_stow, callback_group=spot_ros.group)
+        node.create_service(Trigger,"arm_unstow", spot_ros.handle_arm_unstow, callback_group=spot_ros.group)
+        node.create_service(Trigger,"griper_open", spot_ros.handle_gripper_open, callback_group=spot_ros.group)
+        node.create_service(Trigger,"gripper_close", spot_ros.handle_gripper_close, callback_group=spot_ros.group)
+        node.create_service(Trigger,"arm_carry", spot_ros.handle_arm_carry, callback_group=spot_ros.group)
 
+        node.create_service(GripperAngleMove, "gripper_angle_open", spot_ros.handle_gripper_angle_open, callback_group=spot_ros.group)
+        node.create_service(ArmJointMove, "arm_joint_move", spot_ros.handle_arm_joint_move, callback_group=spot_ros.group)
+        node.create_service(ArmJointMove, "force_trajectory", spot_ros.handle_force_trajectory, callback_group=spot_ros.group)
+        node.create_service(HandPose, "gripper_pose", spot_ros.handle_hand_pose, callback_group=spot_ros.group)
+        
         node.create_service(SetBool, "stair_mode", spot_ros.handle_stair_mode, callback_group=spot_ros.group)
         node.create_service(SetLocomotion, "locomotion_mode", spot_ros.handle_locomotion_mode, callback_group=spot_ros.group)
         node.create_service(SetVelocity, "max_velocity", spot_ros.handle_max_vel, callback_group=spot_ros.group)
