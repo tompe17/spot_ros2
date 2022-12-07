@@ -44,6 +44,22 @@ from spot_msgs.srv import ListGraph
 from spot_msgs.srv import SetLocomotion
 from spot_msgs.srv import ClearBehaviorFault
 from spot_msgs.srv import SetVelocity
+from spot_msgs.srv import (
+    ArmJointMovement,
+    ArmJointMovementResponse,
+    ArmJointMovementRequest,
+)
+from spot_msgs.srv import (
+    GripperAngleMove,
+    GripperAngleMoveResponse,
+    GripperAngleMoveRequest,
+)
+from spot_msgs.srv import (
+    ArmForceTrajectory,
+    ArmForceTrajectoryResponse,
+    ArmForceTrajectoryRequest,
+)
+from spot_msgs.srv import HandPose, HandPoseResponse, HandPoseRequest
 
 #####DEBUG/RELEASE: RELATIVE PATH NOT WORKING IN DEBUG
 # Release
@@ -567,6 +583,55 @@ class SpotROS():
                                                  transform.parent_tform_child)
             self.camera_static_transforms.append(static_tf)
             self.camera_static_transform_broadcaster.sendTransform(self.camera_static_transforms)
+
+    # Arm functions ##################################################
+    def handle_arm_stow(self, srv_data):
+        """ROS service handler to command the arm to stow, home position"""
+        resp = self.spot_wrapper.arm_stow()
+        return TriggerResponse(resp[0], resp[1])
+
+    def handle_arm_unstow(self, srv_data):
+        """ROS service handler to command the arm to unstow, joints are all zeros"""
+        resp = self.spot_wrapper.arm_unstow()
+        return TriggerResponse(resp[0], resp[1])
+
+    def handle_arm_joint_move(self, srv_data: ArmJointMovementRequest):
+        """ROS service handler to send joint movement to the arm to execute"""
+        resp = self.spot_wrapper.arm_joint_move(joint_targets=srv_data.joint_target)
+        return ArmJointMovementResponse(resp[0], resp[1])
+
+    def handle_force_trajectory(self, srv_data: ArmForceTrajectoryRequest):
+        """ROS service handler to send a force trajectory up or down a vertical force"""
+        resp = self.spot_wrapper.force_trajectory(data=srv_data)
+        return ArmForceTrajectoryResponse(resp[0], resp[1])
+
+    def handle_gripper_open(self, srv_data):
+        """ROS service handler to open the gripper"""
+        resp = self.spot_wrapper.gripper_open()
+        return TriggerResponse(resp[0], resp[1])
+
+    def handle_gripper_close(self, srv_data):
+        """ROS service handler to close the gripper"""
+        resp = self.spot_wrapper.gripper_close()
+        return TriggerResponse(resp[0], resp[1])
+
+    def handle_gripper_angle_open(self, srv_data: GripperAngleMoveRequest):
+        """ROS service handler to open the gripper at an angle"""
+        resp = self.spot_wrapper.gripper_angle_open(gripper_ang=srv_data.gripper_angle)
+        return GripperAngleMoveResponse(resp[0], resp[1])
+
+    def handle_arm_carry(self, srv_data):
+        """ROS service handler to put arm in carry mode"""
+        resp = self.spot_wrapper.arm_carry()
+        return TriggerResponse(resp[0], resp[1])
+
+    def handle_hand_pose(self, srv_data: HandPoseRequest):
+        """ROS service to give a position to the gripper"""
+        resp = self.spot_wrapper.hand_pose(pose_points=srv_data.pose_point)
+        return HandPoseResponse(resp[0], resp[1])
+
+    ##################################################################
+            
 
     def shutdown(self, sig, frame):
         self.node.get_logger().info("Shutting down ROS driver for Spot")
