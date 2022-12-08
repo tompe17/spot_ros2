@@ -810,7 +810,7 @@ def main(args = None):
         node.create_service(Trigger,"estop/release", spot_ros.handle_estop_disengage, callback_group=spot_ros.group)
         node.create_service(Trigger,"arm_stow", spot_ros.handle_arm_stow, callback_group=spot_ros.group)
         node.create_service(Trigger,"arm_unstow", spot_ros.handle_arm_unstow, callback_group=spot_ros.group)
-        node.create_service(Trigger,"griper_open", spot_ros.handle_gripper_open, callback_group=spot_ros.group)
+        node.create_service(Trigger,"gripper_open", spot_ros.handle_gripper_open, callback_group=spot_ros.group)
         node.create_service(Trigger,"gripper_close", spot_ros.handle_gripper_close, callback_group=spot_ros.group)
         node.create_service(Trigger,"arm_carry", spot_ros.handle_arm_carry, callback_group=spot_ros.group)
 
