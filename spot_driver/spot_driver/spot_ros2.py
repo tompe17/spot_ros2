@@ -44,21 +44,9 @@ from spot_msgs.srv import ListGraph
 from spot_msgs.srv import SetLocomotion
 from spot_msgs.srv import ClearBehaviorFault
 from spot_msgs.srv import SetVelocity
-from spot_msgs.srv import (
-    ArmJointMovement,
-    ArmJointMovementResponse,
-    ArmJointMovementRequest,
-)
-from spot_msgs.srv import (
-    GripperAngleMove,
-    GripperAngleMoveResponse,
-    GripperAngleMoveRequest,
-)
-from spot_msgs.srv import (
-    ArmForceTrajectory,
-    ArmForceTrajectoryResponse,
-    ArmForceTrajectoryRequest,
-)
+from spot_msgs.srv import ArmJointMovement
+from spot_msgs.srv import GripperAngleMove
+from spot_msgs.srv import ArmForceTrajectory
 from spot_msgs.srv import HandPose, HandPoseResponse, HandPoseRequest
 
 #####DEBUG/RELEASE: RELATIVE PATH NOT WORKING IN DEBUG
