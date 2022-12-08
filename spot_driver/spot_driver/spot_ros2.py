@@ -47,7 +47,7 @@ from spot_msgs.srv import SetVelocity
 from spot_msgs.srv import ArmJointMovement
 from spot_msgs.srv import GripperAngleMove
 from spot_msgs.srv import ArmForceTrajectory
-from spot_msgs.srv import HandPose, HandPoseResponse, HandPoseRequest
+from spot_msgs.srv import HandPose
 
 #####DEBUG/RELEASE: RELATIVE PATH NOT WORKING IN DEBUG
 # Release
