@@ -815,7 +815,7 @@ def main(args = None):
         node.create_service(Trigger,"arm_carry", spot_ros.handle_arm_carry, callback_group=spot_ros.group)
 
         node.create_service(GripperAngleMove, "gripper_angle_open", spot_ros.handle_gripper_angle_open, callback_group=spot_ros.group)
-        node.create_service(ArmJointMove, "arm_joint_move", spot_ros.handle_arm_joint_move, callback_group=spot_ros.group)
+        node.create_service(ArmJointMovement, "arm_joint_move", spot_ros.handle_arm_joint_move, callback_group=spot_ros.group)
         node.create_service(ArmForceTrajectory, "force_trajectory", spot_ros.handle_force_trajectory, callback_group=spot_ros.group)
         node.create_service(HandPose, "gripper_pose", spot_ros.handle_hand_pose, callback_group=spot_ros.group)
         
